@@ -1,0 +1,18 @@
+[Unit]
+Description=Unciv Discord Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__BOT_USER__
+Group=__BOT_USER__
+WorkingDirectory=__PROJECT_DIR__
+Environment=HOME=/home/__BOT_USER__
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 __PROJECT_DIR__/bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
