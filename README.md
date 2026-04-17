@@ -165,6 +165,52 @@ bash deploy/setup_debian_no_venv.sh ysy20081115 /home/ysy20081115/unciv_bot
 
 ## 7. 운영 중 업데이트
 
+코드를 로컬에서 수정하고 GitHub에 push한 뒤, 서버 봇에 반영하는 표준 절차입니다.
+
+### 7-1. 서버 반영 순서
+
+```bash
+cd ~/unciv_bot
+git pull --ff-only origin main
+sudo python3 -m pip install --break-system-packages -r requirements.txt
+sudo systemctl restart unciv-bot
+sudo systemctl is-active unciv-bot
+sudo systemctl status unciv-bot --no-pager -l
+```
+
+### 7-2. 각 단계 설명
+
+- git pull --ff-only origin main
+  - GitHub 최신 코드를 서버에 가져옵니다.
+  - --ff-only 옵션으로 불필요한 merge commit을 방지합니다.
+
+- pip install -r requirements.txt
+  - requirements.txt 변경이 없어도 실행해두면 안전합니다.
+  - 새 라이브러리 추가/버전 변경이 있으면 반드시 필요합니다.
+
+- systemctl restart unciv-bot
+  - 새 코드/설정을 반영하려면 서비스 재시작이 필요합니다.
+
+- is-active / status 확인
+  - active 상태인지 확인해서 배포 성공 여부를 즉시 판단합니다.
+
+### 7-3. 로그 확인 (문제 발생 시)
+
+```bash
+journalctl -u unciv-bot -n 100 --no-pager
+journalctl -u unciv-bot -f
+```
+
+### 7-4. 자주 있는 실수
+
+- GitHub에 push만 하고 서버에서 git pull을 안 한 경우
+- requirements.txt 바뀌었는데 pip install을 생략한 경우
+- 코드 반영 후 systemctl restart를 안 한 경우
+
+### 7-5. 한 줄 요약
+
+- 로컬 수정 -> GitHub push -> 서버 git pull -> pip install -> systemctl restart
+
 ```bash
 cd ~/unciv_bot
 git pull
